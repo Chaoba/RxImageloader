@@ -13,7 +13,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         ImageView img= (ImageView) findViewById(R.id.img);
         RxImageLoader.init(getApplicationContext());
-        RxImageLoader.getLoaderObservalve(img,url)
+        RxImageLoader.getLoaderObservable(img, url)
                 .subscribe(data -> Log.d("test","bitmap size:"+data.bitmap.getHeight()*data.bitmap.getWidth()));
     }
 

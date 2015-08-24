@@ -22,13 +22,15 @@ public class Sources {
 
 
     public Observable<Data> memory(String url) {
-        return mMemoryCacheOvservable.getObservable(url);
+        return mMemoryCacheOvservable.getObservable(url)
+                .compose(logSource("MEMORY"));
     }
 
     public Observable<Data> disk(String url) {
         return mDiskCacheObservable.getObservable(url)
                 .filter(data -> data.bitmap != null)
-                .doOnNext(data -> mMemoryCacheOvservable.putData(data));
+                .doOnNext(mMemoryCacheOvservable::putData)
+                .compose(logSource("DISK"));
 
     }
 
@@ -37,8 +39,17 @@ public class Sources {
                 .doOnNext(data -> {
                     mMemoryCacheOvservable.putData(data);
                     mDiskCacheObservable.putData(data);
-                });
+                })
+                .compose(logSource("NET"));
     }
 
-
+    Observable.Transformer<Data, Data> logSource(final String source) {
+        return dataObservable -> dataObservable.doOnNext(data -> {
+            if (data != null && data.bitmap != null) {
+                Logger.d(source + " has the data you are looking for!");
+            } else {
+                Logger.d(source + " not has the data!");
+            }
+        });
+    }
 }

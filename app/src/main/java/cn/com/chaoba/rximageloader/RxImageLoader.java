@@ -8,6 +8,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * The RxImageLoader use Rxjava to load bitmap,please call
+ * {@link  #init} mothod before use.
  * Created by Liyanshun on 2015/8/24.
  */
 public class RxImageLoader {
@@ -20,16 +22,19 @@ public class RxImageLoader {
 
 //    static WeakHashMap<WeakReference<ImageView>, String> map = new WeakHashMap();
 
-    public static Observable<Data> getLoaderObservalve(ImageView img, String url) {
-
+    /**
+     * get the observable that load img and set it to the given ImageView
+     * @param img the ImageView to show this img
+     * @param url the url for the img
+     * @return the observable to load img
+     */
+    public static Observable<Data> getLoaderObservable(ImageView img, String url) {
         // Create our sequence for querying best available data
         Observable<Data> source = Observable.concat(sources.memory(url), sources.disk(url), sources.network(url))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .first(data -> data != null && url.equals(data.url) && data.bitmap != null);
+                .first(data -> data != null && data.isAvailable() && url.equals(data.url));
 
-        return source.doOnNext(data -> {
-            img.setImageBitmap(data.bitmap);
-        });
+        return source.doOnNext(data -> img.setImageBitmap(data.bitmap));
     }
 }

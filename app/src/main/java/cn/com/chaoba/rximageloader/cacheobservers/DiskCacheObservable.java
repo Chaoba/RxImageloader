@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,6 +15,7 @@ import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
+ * DiskCacheObservable load dat from disk
  * Created by Liyanshun on 2015/8/24.
  */
 public class DiskCacheObservable extends CacheObservable {
@@ -32,8 +32,10 @@ public class DiskCacheObservable extends CacheObservable {
         return Observable.create(new Observable.OnSubscribe<Data>() {
             @Override
             public void call(Subscriber<? super Data> subscriber) {
+                Logger.d("read file from disk");
                 File f = getFile(url);
                 Data data = new Data(f, url);
+                Logger.d("DiskCacheObservable is available:"+data.isAvailable());
                 subscriber.onNext(data);
                 subscriber.onCompleted();
             }
@@ -46,7 +48,7 @@ public class DiskCacheObservable extends CacheObservable {
     }
 
     public void putData(Data data) {
-        Logger.d("put Data:"+data.url);
+        Logger.d("put Data to disk:"+data.url);
         Observable.create(new Observable.OnSubscribe<Data>() {
             @Override
             public void call(Subscriber<? super Data> subscriber) {
@@ -62,8 +64,6 @@ public class DiskCacheObservable extends CacheObservable {
                     data.bitmap.compress(format, 100, out);
                     out.flush();
                     out.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

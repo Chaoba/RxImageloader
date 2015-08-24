@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 /**
+ * class store the url and bitmap
  * Created by Liyanshun on 2015/8/24.
  */
 public class Data {
@@ -21,18 +22,19 @@ public class Data {
     }
 
     public Data(File f, String url) {
-        this.url = url;
         if (f != null && f.exists()) {
             try {
                 bitmap = BitmapFactory.decodeStream(new FileInputStream(f));
+                this.url = url;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public Data(String message) {
-
-        this.message = message;
+    public boolean isAvailable() {
+        Boolean available = url != null && bitmap != null;
+        Logger.d("data is available? " + available);
+        return available;
     }
 }

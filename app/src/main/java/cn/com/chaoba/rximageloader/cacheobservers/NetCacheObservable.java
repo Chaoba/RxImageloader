@@ -13,6 +13,7 @@ import rx.Observable;
 import rx.Subscriber;
 
 /**
+ * NetCacheObservable load data from intenet
  * Created by Liyanshun on 2015/8/24.
  */
 public class NetCacheObservable extends CacheObservable {
@@ -23,14 +24,14 @@ public class NetCacheObservable extends CacheObservable {
             public void call(Subscriber<? super Data> subscriber) {
                 Data data;
                 Bitmap bitmap = null;
-                Logger.d("get img on net:"+url);
+                Logger.d("get img on net:" + url);
                 try {
                     final URLConnection con = new URL(url).openConnection();
-                    bitmap= BitmapFactory.decodeStream(con.getInputStream());
+                    bitmap = BitmapFactory.decodeStream(con.getInputStream());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                data =new Data(bitmap,url);
+                data = new Data(bitmap, url);
                 subscriber.onNext(data);
                 subscriber.onCompleted();
             }
