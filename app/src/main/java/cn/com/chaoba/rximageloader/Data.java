@@ -38,7 +38,6 @@ public class Data {
 
     public boolean isAvailable() {
         isAvailable = url != null && bitmap != null;
-        Logger.i("data is available? " + isAvailable);
         return isAvailable;
     }
 }
