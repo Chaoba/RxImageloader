@@ -12,7 +12,7 @@ public class Logger {
     /**
      * whether show log in logcat.
      */
-    private static boolean mShowLogInLogCat = BuildConfig.DEBUG;
+    private static boolean mShowLogInLogCat = true;
     private static String CLASS_NAME = null;
 
     private static String getFunctionName() {
