@@ -46,9 +46,9 @@ public class Sources {
     Observable.Transformer<Data, Data> logSource(final String source) {
         return dataObservable -> dataObservable.doOnNext(data -> {
             if (data != null && data.bitmap != null) {
-                Logger.d(source + " has the data you are looking for!");
+                Logger.i(source + " has the data you are looking for!");
             } else {
-                Logger.d(source + " not has the data!");
+                Logger.i(source + " not has the data!");
             }
         });
     }

@@ -14,18 +14,22 @@ import java.io.FileNotFoundException;
 public class Data {
     public Bitmap bitmap;
     public String url;
-    private String message;
+    private boolean isAvailable;
 
     public Data(Bitmap bitmap, String url) {
         this.bitmap = bitmap;
         this.url = url;
+//        if (bitmap != null) {
+//            isAvailable = true;
+//        }
     }
 
     public Data(File f, String url) {
         if (f != null && f.exists()) {
+//            isAvailable = true;
+            this.url = url;
             try {
                 bitmap = BitmapFactory.decodeStream(new FileInputStream(f));
-                this.url = url;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -33,8 +37,8 @@ public class Data {
     }
 
     public boolean isAvailable() {
-        Boolean available = url != null && bitmap != null;
-        Logger.d("data is available? " + available);
-        return available;
+        isAvailable = url != null && bitmap != null;
+        Logger.i("data is available? " + isAvailable);
+        return isAvailable;
     }
 }

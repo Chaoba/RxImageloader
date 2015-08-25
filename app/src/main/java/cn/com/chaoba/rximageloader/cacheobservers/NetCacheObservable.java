@@ -11,6 +11,8 @@ import cn.com.chaoba.rximageloader.Data;
 import cn.com.chaoba.rximageloader.Logger;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * NetCacheObservable load data from intenet
@@ -24,7 +26,7 @@ public class NetCacheObservable extends CacheObservable {
             public void call(Subscriber<? super Data> subscriber) {
                 Data data;
                 Bitmap bitmap = null;
-                Logger.d("get img on net:" + url);
+                Logger.i("get img on net:" + url);
                 try {
                     final URLConnection con = new URL(url).openConnection();
                     bitmap = BitmapFactory.decodeStream(con.getInputStream());
@@ -35,6 +37,8 @@ public class NetCacheObservable extends CacheObservable {
                 subscriber.onNext(data);
                 subscriber.onCompleted();
             }
-        });
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

@@ -12,9 +12,8 @@ public class Logger {
     /**
      * whether show log in logcat.
      */
-    private static boolean mShowLogInLogCat = true;
+    private static boolean mShowLogInLogCat = BuildConfig.DEBUG;
     private static String CLASS_NAME = null;
-    ;
 
     private static String getFunctionName() {
         if (CLASS_NAME == null) {
@@ -40,7 +39,6 @@ public class Logger {
     }
 
 
-    @Deprecated
     public static void i(String tag, Object message) {
         String name = getFunctionName();
         if (mShowLogInLogCat) {
@@ -56,7 +54,6 @@ public class Logger {
         i(TAG, message);
     }
 
-    @Deprecated
     public static void d(String tag, Object message) {
         String name = getFunctionName();
         if (mShowLogInLogCat) {
@@ -72,7 +69,6 @@ public class Logger {
         d(TAG, message);
     }
 
-    @Deprecated
     public static void v(String tag, Object message) {
         String name = getFunctionName();
         if (mShowLogInLogCat) {
@@ -84,12 +80,10 @@ public class Logger {
         }
     }
 
-    @Deprecated
     public static void v(Object message) {
         v(TAG, message);
     }
 
-    @Deprecated
     public static void w(String tag, Object message) {
         String name = getFunctionName();
         if (mShowLogInLogCat) {
@@ -105,7 +99,6 @@ public class Logger {
         w(TAG, message);
     }
 
-    @Deprecated
     public static void e(String tag, Object message) {
         String name = getFunctionName();
         if (mShowLogInLogCat) {
@@ -121,7 +114,6 @@ public class Logger {
         e(TAG, message);
     }
 
-    @Deprecated
     public static void e(String tag, Exception e) {
         String name = getFunctionName();
         if (mShowLogInLogCat) {

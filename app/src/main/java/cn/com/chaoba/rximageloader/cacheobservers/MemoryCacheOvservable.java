@@ -1,6 +1,7 @@
 package cn.com.chaoba.rximageloader.cacheobservers;
 
 import cn.com.chaoba.rximageloader.Data;
+import cn.com.chaoba.rximageloader.Logger;
 import cn.com.chaoba.rximageloader.MemoryCache;
 import rx.Observable;
 
@@ -15,6 +16,7 @@ public class MemoryCacheOvservable extends CacheObservable {
     @Override
     public Observable<Data> getObservable(String url) {
         return Observable.create(subscriber -> {
+            Logger.i("search in memory");
             subscriber.onNext(new Data(mCache.get(url), url));
             subscriber.onCompleted();
         });

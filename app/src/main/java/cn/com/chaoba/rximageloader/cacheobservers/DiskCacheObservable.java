@@ -32,7 +32,7 @@ public class DiskCacheObservable extends CacheObservable {
         return Observable.create(new Observable.OnSubscribe<Data>() {
             @Override
             public void call(Subscriber<? super Data> subscriber) {
-                Logger.d("read file from disk");
+                Logger.i("read file from disk");
                 File f = getFile(url);
                 Data data = new Data(f, url);
                 Logger.d("DiskCacheObservable is available:"+data.isAvailable());

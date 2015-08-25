@@ -4,8 +4,6 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * The RxImageLoader use Rxjava to load bitmap,please call
@@ -31,8 +29,8 @@ public class RxImageLoader {
     public static Observable<Data> getLoaderObservable(ImageView img, String url) {
         // Create our sequence for querying best available data
         Observable<Data> source = Observable.concat(sources.memory(url), sources.disk(url), sources.network(url))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
                 .first(data -> data != null && data.isAvailable() && url.equals(data.url));
 
         return source.doOnNext(data -> img.setImageBitmap(data.bitmap));
