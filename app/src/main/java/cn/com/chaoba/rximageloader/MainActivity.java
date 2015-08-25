@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import rx.Subscription;
 
 public class MainActivity extends ListActivity {
-    ArrayList<String> contents=new ArrayList<>();
+    ArrayList<String> contents = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RxImageLoader.init(getApplicationContext());
-        for(int i=0;i<3;i++) {
+        for (int i = 0; i < 1; i++) {
             contents.add("http://att.x2.hiapk.com/forum/month_1008/100804175235a96c931557db2c.png");
             contents.add("http://img5.imgtn.bdimg.com/it/u=1755111051,4257519768&fm=21&gp=0.jpg");
             contents.add("http://img2.imgtn.bdimg.com/it/u=3675742480,2498904140&fm=21&gp=0.jpg");
@@ -62,24 +63,25 @@ public class MainActivity extends ListActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             ViewHolder holder;
-            if(view==null){
-                holder=new ViewHolder();
-                view =View.inflate(MainActivity.this,R.layout.activity_main,null);
-                holder.img= (ImageView) view.findViewById(R.id.img);
+            if (view == null) {
+                holder = new ViewHolder();
+                view = View.inflate(MainActivity.this, R.layout.activity_main, null);
+                holder.img = (ImageView) view.findViewById(R.id.img);
                 view.setTag(holder);
-            }else{
-                holder= (ViewHolder) view.getTag();
+            } else {
+                holder = (ViewHolder) view.getTag();
             }
-            startSubscribe(holder.img,getItem(i));
+            holder.img.setImageResource(R.mipmap.ic_launcher);
+            startSubscribe(holder.img, getItem(i));
             return view;
         }
     }
 
-    class ViewHolder{
+    class ViewHolder {
         public ImageView img;
     }
 
-    private Subscription startSubscribe(ImageView img,String url) {
+    private Subscription startSubscribe(ImageView img, String url) {
         return RxImageLoader.getLoaderObservable(img, url)
                 .subscribe(data -> Logger.i("bitmap size:" + data.bitmap.getHeight() * data.bitmap.getWidth()));
     }

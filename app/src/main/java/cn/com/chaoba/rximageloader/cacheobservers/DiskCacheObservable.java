@@ -12,6 +12,7 @@ import cn.com.chaoba.rximageloader.Data;
 import cn.com.chaoba.rximageloader.Logger;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -35,20 +36,20 @@ public class DiskCacheObservable extends CacheObservable {
                 Logger.i("read file from disk");
                 File f = getFile(url);
                 Data data = new Data(f, url);
-                Logger.d("DiskCacheObservable is available:"+data.isAvailable());
                 subscriber.onNext(data);
                 subscriber.onCompleted();
             }
-        });
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     private File getFile(String url) {
-        url=url.replaceAll(File.separator,"-");
+        url = url.replaceAll(File.separator, "-");
         return new File(mCacheFile, url);
     }
 
     public void putData(Data data) {
-        Logger.d("put Data to disk:"+data.url);
         Observable.create(new Observable.OnSubscribe<Data>() {
             @Override
             public void call(Subscriber<? super Data> subscriber) {

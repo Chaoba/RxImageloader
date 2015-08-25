@@ -19,14 +19,10 @@ public class Data {
     public Data(Bitmap bitmap, String url) {
         this.bitmap = bitmap;
         this.url = url;
-//        if (bitmap != null) {
-//            isAvailable = true;
-//        }
     }
 
     public Data(File f, String url) {
         if (f != null && f.exists()) {
-//            isAvailable = true;
             this.url = url;
             try {
                 bitmap = BitmapFactory.decodeStream(new FileInputStream(f));
