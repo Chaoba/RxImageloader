@@ -2,6 +2,8 @@ package cn.com.chaoba.rximageloader;
 
 import android.util.Log;
 
+import cn.com.chaoba.rximageloaderlibrary.BuildConfig;
+
 /**
  * A class to control log show and save it to sdcard.
  *
@@ -12,7 +14,7 @@ public class Logger {
     /**
      * whether show log in logcat.
      */
-    private static boolean mShowLogInLogCat = true;
+    private static boolean mShowLogInLogCat = BuildConfig.DEBUG;
     private static String CLASS_NAME = null;
 
     private static String getFunctionName() {

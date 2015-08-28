@@ -17,8 +17,10 @@ public class MemoryCacheOvservable extends CacheObservable {
     public Observable<Data> getObservable(String url) {
         return Observable.create(subscriber -> {
             Logger.i("search in memory");
-            subscriber.onNext(new Data(mCache.get(url), url));
-            subscriber.onCompleted();
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onNext(new Data(mCache.get(url), url));
+                subscriber.onCompleted();
+            }
         });
     }
 

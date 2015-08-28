@@ -39,9 +39,7 @@ public class DiskCacheObservable extends CacheObservable {
                 subscriber.onNext(data);
                 subscriber.onCompleted();
             }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
     private File getFile(String url) {
@@ -49,13 +47,18 @@ public class DiskCacheObservable extends CacheObservable {
         return new File(mCacheFile, url);
     }
 
+    /**
+     * save pictures downloaded from net to disk
+     * @param data data to be saved
+     */
     public void putData(Data data) {
         Observable.create(new Observable.OnSubscribe<Data>() {
             @Override
             public void call(Subscriber<? super Data> subscriber) {
                 File f = getFile(data.url);
+                OutputStream out = null;
                 try {
-                    OutputStream out = new FileOutputStream(f);
+                    out = new FileOutputStream(f);
                     Bitmap.CompressFormat format;
                     if (data.url.endsWith("png") || data.url.endsWith("PNG")) {
                         format = Bitmap.CompressFormat.PNG;
@@ -67,11 +70,20 @@ public class DiskCacheObservable extends CacheObservable {
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    if (out != null) {
+                        try {
+                            out.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                subscriber.onNext(data);
-                subscriber.onCompleted();
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(data);
+                    subscriber.onCompleted();
+                }
             }
-        }).subscribeOn(Schedulers.io())
-                .subscribe();
+        }).subscribeOn(Schedulers.io()).subscribe();
     }
 }

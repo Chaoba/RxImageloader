@@ -29,6 +29,7 @@ public class Sources {
     public Observable<Data> disk(String url) {
         return mDiskCacheObservable.getObservable(url)
                 .filter(data -> data.bitmap != null)
+                //save picture to disk
                 .doOnNext(mMemoryCacheOvservable::putData)
                 .compose(logSource("DISK"));
 
@@ -37,6 +38,7 @@ public class Sources {
     public Observable<Data> network(String url) {
         return mNetCacheObservable.getObservable(url)
                 .doOnNext(data -> {
+                    //save picture to disk and memory
                     mMemoryCacheOvservable.putData(data);
                     mDiskCacheObservable.putData(data);
                 })

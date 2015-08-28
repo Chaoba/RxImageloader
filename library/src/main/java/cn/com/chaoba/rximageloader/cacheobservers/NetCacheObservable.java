@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -26,19 +27,29 @@ public class NetCacheObservable extends CacheObservable {
             public void call(Subscriber<? super Data> subscriber) {
                 Data data;
                 Bitmap bitmap = null;
+                InputStream inputStream = null;
                 Logger.i("get img on net:" + url);
                 try {
                     final URLConnection con = new URL(url).openConnection();
-                    bitmap = BitmapFactory.decodeStream(con.getInputStream());
+                    inputStream = con.getInputStream();
+                    bitmap = BitmapFactory.decodeStream(inputStream);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 data = new Data(bitmap, url);
-                subscriber.onNext(data);
-                subscriber.onCompleted();
+                if(!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(data);
+                    subscriber.onCompleted();
+                }
             }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }
