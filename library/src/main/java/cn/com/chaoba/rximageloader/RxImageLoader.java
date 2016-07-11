@@ -44,6 +44,7 @@ public class RxImageLoader {
             if (img != null && url.equals(cacheKeysMap.get(img.hashCode()))) {
                 img.setImageBitmap(data.bitmap);
             }
+
         });
     }
 }

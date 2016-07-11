@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import rx.Subscriber;
 import rx.Subscription;
 
 public class MainActivity extends ListActivity {
@@ -83,7 +84,22 @@ public class MainActivity extends ListActivity {
 
     private Subscription startSubscribe(ImageView img, String url) {
         return RxImageLoader.getLoaderObservable(img, url)
-                .subscribe(data -> Logger.i("bitmap size:" + data.bitmap.getHeight() * data.bitmap.getWidth()));
+                .subscribe(new Subscriber<Data>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Data data) {
+                         Logger.i("bitmap size:" + data.bitmap.getHeight() * data.bitmap.getWidth());
+                    }
+                });
     }
 
 }

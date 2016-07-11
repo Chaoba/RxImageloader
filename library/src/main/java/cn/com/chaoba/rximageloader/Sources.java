@@ -6,6 +6,7 @@ import cn.com.chaoba.rximageloader.cacheobservers.DiskCacheObservable;
 import cn.com.chaoba.rximageloader.cacheobservers.MemoryCacheOvservable;
 import cn.com.chaoba.rximageloader.cacheobservers.NetCacheObservable;
 import rx.Observable;
+import rx.functions.Func1;
 
 public class Sources {
     Context mContext;
@@ -37,6 +38,12 @@ public class Sources {
 
     public Observable<Data> network(String url) {
         return mNetCacheObservable.getObservable(url)
+                .filter(new Func1<Data, Boolean>() {
+                    @Override
+                    public Boolean call(Data data) {
+                        return data.isAvailable();
+                    }
+                })
                 .doOnNext(data -> {
                     //save picture to disk and memory
                     mMemoryCacheOvservable.putData(data);
