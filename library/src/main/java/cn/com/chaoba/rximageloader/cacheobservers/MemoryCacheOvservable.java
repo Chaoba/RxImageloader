@@ -4,6 +4,7 @@ import cn.com.chaoba.rximageloader.Data;
 import cn.com.chaoba.rximageloader.Logger;
 import cn.com.chaoba.rximageloader.MemoryCache;
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * MemoryCacheOvservable load data from memory
@@ -15,13 +16,14 @@ public class MemoryCacheOvservable extends CacheObservable {
 
     @Override
     public Observable<Data> getObservable(String url) {
-        return Observable.create(subscriber -> {
-            Logger.i("search in memory");
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(new Data(mCache.get(url), url));
-                subscriber.onCompleted();
-            }
-        });
+        return Observable.just(url)
+                .map(new Func1<String, Data>() {
+                    @Override
+                    public Data call(String s) {
+                        Logger.i("search in memory");
+                        return new Data(mCache.get(url), url);
+                    }
+                });
     }
 
     public void putData(Data data) {

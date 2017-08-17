@@ -6,6 +6,7 @@ import cn.com.chaoba.rximageloader.cacheobservers.DiskCacheObservable;
 import cn.com.chaoba.rximageloader.cacheobservers.MemoryCacheOvservable;
 import cn.com.chaoba.rximageloader.cacheobservers.NetCacheObservable;
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class Sources {
@@ -29,9 +30,19 @@ public class Sources {
 
     public Observable<Data> disk(String url) {
         return mDiskCacheObservable.getObservable(url)
-                .filter(data -> data.bitmap != null)
+                .filter(new Func1<Data, Boolean>() {
+                    @Override
+                    public Boolean call(Data data) {
+                        return data.bitmap != null;
+                    }
+                })
                 //save picture to disk
-                .doOnNext(mMemoryCacheOvservable::putData)
+                .doOnNext(new Action1<Data>() {
+                    @Override
+                    public void call(Data data) {
+                        mMemoryCacheOvservable.putData(data);
+                    }
+                })
                 .compose(logSource("DISK"));
 
     }
@@ -44,10 +55,13 @@ public class Sources {
                         return data.isAvailable();
                     }
                 })
-                .doOnNext(data -> {
-                    //save picture to disk and memory
-                    mMemoryCacheOvservable.putData(data);
-                    mDiskCacheObservable.putData(data);
+                .doOnNext(new Action1<Data>() {
+                    @Override
+                    public void call(Data data) {
+                        //save picture to disk and memory
+                        mMemoryCacheOvservable.putData(data);
+                        mDiskCacheObservable.putData(data);
+                    }
                 })
                 .compose(logSource("NET"));
     }

@@ -11,8 +11,8 @@ import java.io.OutputStream;
 import cn.com.chaoba.rximageloader.Data;
 import cn.com.chaoba.rximageloader.Logger;
 import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.exceptions.Exceptions;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -30,16 +30,17 @@ public class DiskCacheObservable extends CacheObservable {
 
     @Override
     public Observable<Data> getObservable(String url) {
-        return Observable.create(new Observable.OnSubscribe<Data>() {
-            @Override
-            public void call(Subscriber<? super Data> subscriber) {
-                Logger.i("read file from disk");
-                File f = getFile(url);
-                Data data = new Data(f, url);
-                subscriber.onNext(data);
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        return Observable.just(url)
+                .map(new Func1<String, Data>() {
+                    @Override
+                    public Data call(String s) {
+                        Logger.i("read file from disk");
+                        File f = getFile(url);
+                        Data data = new Data(f, url);
+                        return data;
+                    }
+                })
+                .subscribeOn(Schedulers.io());
     }
 
     private File getFile(String url) {
@@ -49,41 +50,40 @@ public class DiskCacheObservable extends CacheObservable {
 
     /**
      * save pictures downloaded from net to disk
+     *
      * @param data data to be saved
      */
     public void putData(Data data) {
-        Observable.create(new Observable.OnSubscribe<Data>() {
-            @Override
-            public void call(Subscriber<? super Data> subscriber) {
-                File f = getFile(data.url);
-                OutputStream out = null;
-                try {
-                    out = new FileOutputStream(f);
-                    Bitmap.CompressFormat format;
-                    if (data.url.endsWith("png") || data.url.endsWith("PNG")) {
-                        format = Bitmap.CompressFormat.PNG;
-                    } else {
-                        format = Bitmap.CompressFormat.JPEG;
-                    }
-                    data.bitmap.compress(format, 100, out);
-                    out.flush();
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (out != null) {
+        Observable.just(data)
+                .map(new Func1<Data, Data>() {
+                    @Override
+                    public Data call(Data data) {
+                        File f = getFile(data.url);
+                        OutputStream out = null;
                         try {
+                            out = new FileOutputStream(f);
+                            Bitmap.CompressFormat format;
+                            if (data.url.endsWith("png") || data.url.endsWith("PNG")) {
+                                format = Bitmap.CompressFormat.PNG;
+                            } else {
+                                format = Bitmap.CompressFormat.JPEG;
+                            }
+                            data.bitmap.compress(format, 100, out);
+                            out.flush();
                             out.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            throw Exceptions.propagate(e);
+                        } finally {
+                            if (out != null) {
+                                try {
+                                    out.close();
+                                } catch (IOException e) {
+                                    throw Exceptions.propagate(e);
+                                }
+                            }
                         }
+                        return data;
                     }
-                }
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(data);
-                    subscriber.onCompleted();
-                }
-            }
-        }).subscribeOn(Schedulers.io()).subscribe();
+                }).subscribeOn(Schedulers.io()).subscribe();
     }
 }

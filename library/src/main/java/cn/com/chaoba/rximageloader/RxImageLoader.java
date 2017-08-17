@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * The RxImageLoader use Rxjava to load bitmap,please call
@@ -37,14 +39,22 @@ public class RxImageLoader {
             cacheKeysMap.put(img.hashCode(), url);
         }
         // Create our sequence for querying best available data
-        Observable<Data> source = Observable.concat(sources.memory(url), sources.disk(url), sources.network(url))
-                .first(data -> data != null && data.isAvailable() && url.equals(data.url));
+        Observable<Data> source = Observable.concat(sources.memory(url), sources.disk(url),
+                sources.network(url))
+                .first(new Func1<Data, Boolean>() {
+                    @Override
+                    public Boolean call(Data data) {
+                        return data != null && data.isAvailable() && url.equals(data.url);
+                    }
+                });
 
-        return source.doOnNext(data -> {
-            if (img != null && url.equals(cacheKeysMap.get(img.hashCode()))) {
-                img.setImageBitmap(data.bitmap);
+        return source.doOnNext(new Action1<Data>() {
+            @Override
+            public void call(Data data) {
+                if (img != null && url.equals(cacheKeysMap.get(img.hashCode()))) {
+                    img.setImageBitmap(data.bitmap);
+                }
             }
-
         });
     }
 }

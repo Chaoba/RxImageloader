@@ -12,7 +12,6 @@ import cn.com.chaoba.rximageloader.Data;
 import cn.com.chaoba.rximageloader.Logger;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
@@ -45,11 +44,11 @@ public class NetCacheObservable extends CacheObservable {
                     }
                 }
                 data = new Data(bitmap, url);
-                if(!subscriber.isUnsubscribed()) {
+                if (!subscriber.isUnsubscribed()) {
                     subscriber.onNext(data);
                     subscriber.onCompleted();
                 }
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        }).subscribeOn(Schedulers.io());
     }
 }
