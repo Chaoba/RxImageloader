@@ -7,12 +7,13 @@ import rx.Observable;
 import rx.functions.Func1;
 
 /**
- * MemoryCacheOvservable load data from memory
+ * MemoryCacheObservable load data from memory
  * Created by Liyanshun on 2015/8/24.
  */
-public class MemoryCacheOvservable extends CacheObservable {
-    public static final int DEFAULT_CACHE_SIZE = (24 /* MiB */ * 1024 * 1024);
-    MemoryCache<String> mCache = new MemoryCache<>(DEFAULT_CACHE_SIZE);
+public class MemoryCacheObservable extends CacheObservable {
+    //Cache size 24MB
+    public static final int CACHE_SIZE = (24 * 1024 * 1024);
+    MemoryCache<String> mCache = new MemoryCache<>(CACHE_SIZE);
 
     @Override
     public Observable<Data> getObservable(String url) {
@@ -29,6 +30,4 @@ public class MemoryCacheOvservable extends CacheObservable {
     public void putData(Data data) {
         mCache.put(data.url, data.bitmap);
     }
-
-
 }

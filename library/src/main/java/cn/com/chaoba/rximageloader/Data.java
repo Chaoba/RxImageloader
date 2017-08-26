@@ -25,7 +25,8 @@ public class Data {
         if (f != null && f.exists()) {
             this.url = url;
             try {
-                bitmap = BitmapFactory.decodeStream(new FileInputStream(f));
+                FileInputStream stream = new FileInputStream(f);
+                bitmap = BitmapFactory.decodeStream(stream);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

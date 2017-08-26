@@ -24,8 +24,8 @@ public class RxImageLoader {
     }
 
 
-    private static final Map<Integer, String> cacheKeysMap = Collections
-            .synchronizedMap(new HashMap<>());
+    private static final Map<Integer, String> cacheKeysMap
+            = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * get the observable that load img and set it to the given ImageView
@@ -34,24 +34,30 @@ public class RxImageLoader {
      * @param url the url for the img
      * @return the observable to load img
      */
-    public static Observable<Data> getLoaderObservable(ImageView img, String url) {
+    public static Observable<Data> loadImage(ImageView img, String url) {
         if (img != null) {
             cacheKeysMap.put(img.hashCode(), url);
         }
         // Create our sequence for querying best available data
-        Observable<Data> source = Observable.concat(sources.memory(url), sources.disk(url),
+        Observable<Data> source = Observable.concat(
+                sources.memory(url),
+                sources.disk(url),
                 sources.network(url))
                 .first(new Func1<Data, Boolean>() {
                     @Override
                     public Boolean call(Data data) {
-                        return data != null && data.isAvailable() && url.equals(data.url);
+                        return data != null
+                                && data.isAvailable()
+                                && url.equals(data.url);
                     }
                 });
 
         return source.doOnNext(new Action1<Data>() {
             @Override
             public void call(Data data) {
-                if (img != null && url.equals(cacheKeysMap.get(img.hashCode()))) {
+                int hashcode = img.hashCode();
+                String cachedUrl = cacheKeysMap.get(hashcode);
+                if (img != null && url.equals(cachedUrl)) {
                     img.setImageBitmap(data.bitmap);
                 }
             }

@@ -3,21 +3,22 @@ package cn.com.chaoba.rximageloader;
 import android.content.Context;
 
 import cn.com.chaoba.rximageloader.cacheobservers.DiskCacheObservable;
-import cn.com.chaoba.rximageloader.cacheobservers.MemoryCacheOvservable;
+import cn.com.chaoba.rximageloader.cacheobservers.MemoryCacheObservable;
 import cn.com.chaoba.rximageloader.cacheobservers.NetCacheObservable;
 import rx.Observable;
+import rx.Observable.Transformer;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class Sources {
     Context mContext;
-    MemoryCacheOvservable mMemoryCacheOvservable;
+    MemoryCacheObservable mMemoryCacheOvservable;
     DiskCacheObservable mDiskCacheObservable;
     NetCacheObservable mNetCacheObservable;
 
     public Sources(Context mContext) {
         this.mContext = mContext;
-        mMemoryCacheOvservable = new MemoryCacheOvservable();
+        mMemoryCacheOvservable = new MemoryCacheObservable();
         mDiskCacheObservable = new DiskCacheObservable(mContext);
         mNetCacheObservable = new NetCacheObservable();
     }
@@ -33,7 +34,7 @@ public class Sources {
                 .filter(new Func1<Data, Boolean>() {
                     @Override
                     public Boolean call(Data data) {
-                        return data.bitmap != null;
+                        return data.isAvailable();
                     }
                 })
                 //save picture to disk
@@ -44,7 +45,6 @@ public class Sources {
                     }
                 })
                 .compose(logSource("DISK"));
-
     }
 
     public Observable<Data> network(String url) {
@@ -66,10 +66,10 @@ public class Sources {
                 .compose(logSource("NET"));
     }
 
-    Observable.Transformer<Data, Data> logSource(final String source) {
+    Transformer<Data, Data> logSource(final String source) {
         return dataObservable -> dataObservable.doOnNext(data -> {
-            if (data != null && data.bitmap != null) {
-                Logger.i(source + " has the data you are looking for!");
+            if (data != null && data.isAvailable()) {
+                Logger.i(source + " has the data!");
             } else {
                 Logger.i(source + " not has the data!");
             }

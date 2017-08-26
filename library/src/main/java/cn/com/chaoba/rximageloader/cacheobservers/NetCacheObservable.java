@@ -12,6 +12,8 @@ import cn.com.chaoba.rximageloader.Data;
 import cn.com.chaoba.rximageloader.Logger;
 import rx.Observable;
 import rx.Subscriber;
+import rx.exceptions.Exceptions;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -21,34 +23,32 @@ import rx.schedulers.Schedulers;
 public class NetCacheObservable extends CacheObservable {
     @Override
     public Observable<Data> getObservable(String url) {
-        return Observable.create(new Observable.OnSubscribe<Data>() {
-            @Override
-            public void call(Subscriber<? super Data> subscriber) {
-                Data data;
-                Bitmap bitmap = null;
-                InputStream inputStream = null;
-                Logger.i("get img on net:" + url);
-                try {
-                    final URLConnection con = new URL(url).openConnection();
-                    inputStream = con.getInputStream();
-                    bitmap = BitmapFactory.decodeStream(inputStream);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (inputStream != null) {
+        return Observable.just(url)
+                .map(new Func1<String, Data>() {
+                    @Override
+                    public Data call(String url) {
+                        Bitmap bitmap = null;
+                        InputStream inputStream = null;
+                        Logger.i("get img on net:" + url);
                         try {
-                            inputStream.close();
+                            URLConnection con = new URL(url)
+                                    .openConnection();
+                            inputStream = con.getInputStream();
+                            bitmap = BitmapFactory
+                                    .decodeStream(inputStream);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            throw Exceptions.propagate(e);
+                        } finally {
+                            if (inputStream != null) {
+                                try {
+                                    inputStream.close();
+                                } catch (IOException e) {
+                                    throw Exceptions.propagate(e);
+                                }
+                            }
                         }
+                        return new Data(bitmap, url);
                     }
-                }
-                data = new Data(bitmap, url);
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(data);
-                    subscriber.onCompleted();
-                }
-            }
-        }).subscribeOn(Schedulers.io());
+                }).subscribeOn(Schedulers.io());
     }
 }

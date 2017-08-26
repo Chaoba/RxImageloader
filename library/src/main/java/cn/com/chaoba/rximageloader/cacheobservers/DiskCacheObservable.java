@@ -63,7 +63,8 @@ public class DiskCacheObservable extends CacheObservable {
                         try {
                             out = new FileOutputStream(f);
                             Bitmap.CompressFormat format;
-                            if (data.url.endsWith("png") || data.url.endsWith("PNG")) {
+                            if (data.url.endsWith("png")
+                                    || data.url.endsWith("PNG")) {
                                 format = Bitmap.CompressFormat.PNG;
                             } else {
                                 format = Bitmap.CompressFormat.JPEG;

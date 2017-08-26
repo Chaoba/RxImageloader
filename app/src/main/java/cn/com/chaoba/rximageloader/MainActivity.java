@@ -83,7 +83,7 @@ public class MainActivity extends ListActivity {
     }
 
     private Subscription startSubscribe(ImageView img, String url) {
-        return RxImageLoader.getLoaderObservable(img, url)
+        return RxImageLoader.loadImage(img, url)
                 .subscribe(new Subscriber<Data>() {
                     @Override
                     public void onCompleted() {
