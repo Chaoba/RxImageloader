@@ -67,12 +67,21 @@ public class Sources {
     }
 
     Transformer<Data, Data> logSource(final String source) {
-        return dataObservable -> dataObservable.doOnNext(data -> {
-            if (data != null && data.isAvailable()) {
-                Logger.i(source + " has the data!");
-            } else {
-                Logger.i(source + " not has the data!");
+        return new Transformer<Data, Data>() {
+            @Override
+            public Observable<Data> call(Observable<Data> dataObservable) {
+                return dataObservable.doOnNext(
+                        new Action1<Data>() {
+                            @Override
+                            public void call(Data data) {
+                                if (data != null && data.isAvailable()) {
+                                    Logger.i(source + " has the data!");
+                                } else {
+                                    Logger.i(source + " not has the data!");
+                                }
+                            }
+                        });
             }
-        });
+        };
     }
 }

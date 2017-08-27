@@ -33,7 +33,7 @@ public class DiskCacheObservable extends CacheObservable {
         return Observable.just(url)
                 .map(new Func1<String, Data>() {
                     @Override
-                    public Data call(String s) {
+                    public Data call(String url) {
                         Logger.i("read file from disk");
                         File f = getFile(url);
                         Data data = new Data(f, url);

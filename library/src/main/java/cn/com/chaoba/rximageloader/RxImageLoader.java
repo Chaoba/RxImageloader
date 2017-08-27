@@ -26,7 +26,7 @@ public class RxImageLoader {
 
 
     private static final Map<Integer, String> cacheKeysMap
-            = Collections.synchronizedMap(new HashMap<>());
+            = Collections.synchronizedMap(new HashMap<Integer, String>());
 
     /**
      * get the observable that load img and
@@ -36,8 +36,8 @@ public class RxImageLoader {
      * @param url the url for the img
      * @return the observable to load img
      */
-    public static Observable<Data> loadImage(ImageView img,
-                                             String url) {
+    public static Observable<Data> loadImage(final ImageView img,
+                                             final String url) {
         if (img != null) {
             cacheKeysMap.put(img.hashCode(), url);
         }

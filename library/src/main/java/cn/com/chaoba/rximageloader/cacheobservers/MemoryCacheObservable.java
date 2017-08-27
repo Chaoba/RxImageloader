@@ -20,7 +20,7 @@ public class MemoryCacheObservable extends CacheObservable {
         return Observable.just(url)
                 .map(new Func1<String, Data>() {
                     @Override
-                    public Data call(String s) {
+                    public Data call(String url) {
                         Logger.i("search in memory");
                         return new Data(mCache.get(url), url);
                     }
