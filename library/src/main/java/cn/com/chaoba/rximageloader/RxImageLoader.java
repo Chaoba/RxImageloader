@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -28,13 +29,15 @@ public class RxImageLoader {
             = Collections.synchronizedMap(new HashMap<>());
 
     /**
-     * get the observable that load img and set it to the given ImageView
+     * get the observable that load img and
+     * set it to the given ImageView
      *
      * @param img the ImageView to show this img
      * @param url the url for the img
      * @return the observable to load img
      */
-    public static Observable<Data> loadImage(ImageView img, String url) {
+    public static Observable<Data> loadImage(ImageView img,
+                                             String url) {
         if (img != null) {
             cacheKeysMap.put(img.hashCode(), url);
         }
@@ -50,7 +53,8 @@ public class RxImageLoader {
                                 && data.isAvailable()
                                 && url.equals(data.url);
                     }
-                });
+                })
+                .observeOn(AndroidSchedulers.mainThread());
 
         return source.doOnNext(new Action1<Data>() {
             @Override

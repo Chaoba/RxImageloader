@@ -31,6 +31,7 @@ public class Sources {
 
     public Observable<Data> disk(String url) {
         return mDiskCacheObservable.getObservable(url)
+                .compose(logSource("DISK"))
                 .filter(new Func1<Data, Boolean>() {
                     @Override
                     public Boolean call(Data data) {
@@ -43,12 +44,12 @@ public class Sources {
                     public void call(Data data) {
                         mMemoryCacheOvservable.putData(data);
                     }
-                })
-                .compose(logSource("DISK"));
+                });
     }
 
     public Observable<Data> network(String url) {
         return mNetCacheObservable.getObservable(url)
+                .compose(logSource("NET"))
                 .filter(new Func1<Data, Boolean>() {
                     @Override
                     public Boolean call(Data data) {
@@ -62,8 +63,7 @@ public class Sources {
                         mMemoryCacheOvservable.putData(data);
                         mDiskCacheObservable.putData(data);
                     }
-                })
-                .compose(logSource("NET"));
+                });
     }
 
     Transformer<Data, Data> logSource(final String source) {
