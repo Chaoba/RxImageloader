@@ -24,6 +24,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-
-    compile project(':library')
+    compile 'com.github.Chaoba:RxImageloader:v1.0'
+//    compile project(':library')
 }
