@@ -17,3 +17,13 @@ dependencies {
         compile 'com.github.Chaoba:RxImageloader:v1.0'
 }
 ```
+
+3. Init RxImageLoader
+```
+RxImageLoader.init(getApplicationContext());
+```
+
+4. Load image with RxImageLoader
+```
+RxImageLoader.loadImage(ImageView, url).subscribe();
+```
